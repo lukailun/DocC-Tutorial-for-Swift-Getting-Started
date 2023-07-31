@@ -30,117 +30,117 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
 import GivenWithLoveHelper
+import SwiftUI
 
 /// Checkout `Focusable` cases used to toggle focus inside ``CheckoutFormView``.
 enum CheckoutFocusable: Hashable {
-  case name
-  case address
-  case phone
+    case name
+    case address
+    case phone
 }
 
 /// Checkout form including recipient's data and payment method.
 struct CheckoutFormView: View {
-  @Binding var rootIsActive: Bool
-  @State private var isShowingGiftMessageView = false
-  @ObservedObject var checkoutViewModel: CheckoutViewModel
-  @FocusState private var checkoutInFocus: CheckoutFocusable?
+    @Binding var rootIsActive: Bool
+    @State private var isShowingGiftMessageView = false
+    @ObservedObject var checkoutViewModel: CheckoutViewModel
+    @FocusState private var checkoutInFocus: CheckoutFocusable?
 
-  @ViewBuilder var recipientDataView: some View {
-    Section(header: Text("Recipient Data")) {
-      EntryTextField(
-        sfSymbolName: "person",
-        placeHolder: "Name",
-        prompt: checkoutViewModel.validateNamePrompt,
-        field: $checkoutViewModel.checkoutData.recipientName
-      )
-        .focused($checkoutInFocus, equals: .name)
-        .onAppear {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-            self.checkoutInFocus = .name
-          }
+    @ViewBuilder var recipientDataView: some View {
+        Section(header: Text("Recipient Data")) {
+            EntryTextField(
+                sfSymbolName: "person",
+                placeHolder: "Name",
+                prompt: checkoutViewModel.validateNamePrompt,
+                field: $checkoutViewModel.checkoutData.recipientName
+            )
+            .focused($checkoutInFocus, equals: .name)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                    self.checkoutInFocus = .name
+                }
+            }
+
+            EntryTextField(
+                sfSymbolName: "house",
+                placeHolder: "Address",
+                prompt: checkoutViewModel.validateAddressPrompt,
+                field: $checkoutViewModel.checkoutData.recipientAddress
+            )
+            .focused($checkoutInFocus, equals: .address)
+
+            EntryTextField(
+                sfSymbolName: "phone",
+                placeHolder: "Phone",
+                prompt: checkoutViewModel.validatePhonePrompt,
+                field: $checkoutViewModel.checkoutData.recipientPhone
+            )
+            .keyboardType(.phonePad)
+            .focused($checkoutInFocus, equals: .phone)
         }
-
-      EntryTextField(
-        sfSymbolName: "house",
-        placeHolder: "Address",
-        prompt: checkoutViewModel.validateAddressPrompt,
-        field: $checkoutViewModel.checkoutData.recipientAddress
-      )
-      .focused($checkoutInFocus, equals: .address)
-
-      EntryTextField(
-        sfSymbolName: "phone",
-        placeHolder: "Phone",
-        prompt: checkoutViewModel.validatePhonePrompt,
-        field: $checkoutViewModel.checkoutData.recipientPhone
-      )
-      .keyboardType(.phonePad)
-      .focused($checkoutInFocus, equals: .phone)
+        .onChange(of: checkoutInFocus) { checkoutViewModel.checkoutInFocus = $0 }
+        .onChange(of: checkoutViewModel.checkoutInFocus) { checkoutInFocus = $0 }
     }
-    .onChange(of: checkoutInFocus) { checkoutViewModel.checkoutInFocus = $0 }
-    .onChange(of: checkoutViewModel.checkoutInFocus) { checkoutInFocus = $0 }
-  }
 
-  /// Custom view showing the button leading to ``GiftMessageView``after all textfields ``CheckoutFormView`` inside are valid.
-  @ViewBuilder var giftMessageButton: some View {
-    ZStack {
-      if checkoutViewModel.allFieldsValid {
-        NavigationLink(
-          destination: getNextNavigation(),
-          isActive: $isShowingGiftMessageView
-        ) {
-          EmptyView()
+    /// Custom view showing the button leading to ``GiftMessageView``after all textfields ``CheckoutFormView`` inside are valid.
+    @ViewBuilder var giftMessageButton: some View {
+        ZStack {
+            if checkoutViewModel.allFieldsValid {
+                NavigationLink(
+                    destination: getNextNavigation(),
+                    isActive: $isShowingGiftMessageView
+                ) {
+                    EmptyView()
+                }
+            }
+
+            CustomButton(text: "Proceed to Gift Message") {
+                checkoutViewModel.validateAllFields()
+                isShowingGiftMessageView = true
+            }
         }
-      }
-
-      CustomButton(text: "Proceed to Gift Message") {
-        checkoutViewModel.validateAllFields()
-        isShowingGiftMessageView = true
-      }
     }
-  }
 
-  func getNextNavigation() -> AnyView {
-    let giftMessageViewModel = GiftMessageViewModel(checkoutData: checkoutViewModel.checkoutData)
+    func getNextNavigation() -> AnyView {
+        let giftMessageViewModel = GiftMessageViewModel(checkoutData: checkoutViewModel.checkoutData)
 
-    if UIDevice.current.userInterfaceIdiom == .phone {
-      return AnyView(GiftMessageView(rootIsActive: $rootIsActive, giftMessageViewModel: giftMessageViewModel))
-    } else {
-      return AnyView(HStack {
-        GiftMessageView(rootIsActive: $rootIsActive, giftMessageViewModel: giftMessageViewModel)
-        GiftMessagePreview(giftMessageViewModel: giftMessageViewModel)
-      }.navigationViewStyle(.columns)
-      )
-    }
-  }
-
-  var body: some View {
-    VStack {
-      Form {
-        recipientDataView
-        Section(header: Text("Payment Method")) {
-          Toggle(isOn: self.$checkoutViewModel.checkoutData.payWithCash) {
-            Text("Pay with cash")
-          }
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return AnyView(GiftMessageView(rootIsActive: $rootIsActive, giftMessageViewModel: giftMessageViewModel))
+        } else {
+            return AnyView(HStack {
+                GiftMessageView(rootIsActive: $rootIsActive, giftMessageViewModel: giftMessageViewModel)
+                GiftMessagePreview(giftMessageViewModel: giftMessageViewModel)
+            }.navigationViewStyle(.columns)
+            )
         }
-        .navigationTitle("Checkout Form")
-        .navigationBarTitleDisplayMode(.inline)
-      }
+    }
 
-      giftMessageButton
+    var body: some View {
+        VStack {
+            Form {
+                recipientDataView
+                Section(header: Text("Payment Method")) {
+                    Toggle(isOn: self.$checkoutViewModel.checkoutData.payWithCash) {
+                        Text("Pay with cash")
+                    }
+                }
+                .navigationTitle("Checkout Form")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+
+            giftMessageButton
+        }
+        .onSubmit {
+            checkoutViewModel.toggleFocus()
+        }
     }
-    .onSubmit {
-      checkoutViewModel.toggleFocus()
-    }
-  }
 }
 
 struct CheckoutFormView_Previews: PreviewProvider {
-  static var previews: some View {
-    let gift = Gift(name: "Watch", price: 100)
-    let checkoutViewModel = CheckoutViewModel(checkoutData: CheckoutData(gift: gift))
-    CheckoutFormView(rootIsActive: .constant(false), checkoutViewModel: checkoutViewModel)
-  }
+    static var previews: some View {
+        let gift = Gift(name: "Watch", price: 100)
+        let checkoutViewModel = CheckoutViewModel(checkoutData: CheckoutData(gift: gift))
+        CheckoutFormView(rootIsActive: .constant(false), checkoutViewModel: checkoutViewModel)
+    }
 }

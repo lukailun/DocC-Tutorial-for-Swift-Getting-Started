@@ -30,86 +30,87 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
 import GivenWithLoveHelper
+import SwiftUI
 
 /// Gifts message view model that handles adding new ``CheckoutData/recipientEmails``, toggling focus between message views, validate textfields, and replace english text with its corresponding emoji.
 class GiftMessageViewModel: ObservableObject {
-  // MARK: - Variables
-  @Published var checkoutData: CheckoutData
-  // swiftlint: disable array_constructor
-  @Published var recipientEmails = [RecipientEmail(email: "")]
-  // swiftlint: enable array_constructor
-  @Published var giftMessageInFocus: GiftMessageFocusable?
-  @Published var suggestedEmoji = ""
+    // MARK: - Variables
 
-  init(checkoutData: CheckoutData) {
-    self.checkoutData = checkoutData
-  }
+    @Published var checkoutData: CheckoutData
+    // swiftlint: disable array_constructor
+    @Published var recipientEmails = [RecipientEmail(email: "")]
+    // swiftlint: enable array_constructor
+    @Published var giftMessageInFocus: GiftMessageFocusable?
+    @Published var suggestedEmoji = ""
 
-  // MARK: - Intent(s)
-
-  /// Add new ``CheckoutData/recipientEmails`` for the recipient.
-  func addNewEmail() {
-    let newEmail = RecipientEmail(email: "")
-    recipientEmails.append(newEmail)
-    giftMessageInFocus = .row(id: newEmail.id)
-  }
-
-  /// Toggle focus between ``GiftMessageView`` email textfields by changing **FocusState** variable. The view release focus if it reaches the last email textfield.
-  func toggleFocus() {
-    guard let currentFocus = recipientEmails.first(where: { giftMessageInFocus == .row(id: $0.id) }) else { return }
-    for index in recipientEmails.indices where currentFocus.id == recipientEmails[index].id {
-      if index == recipientEmails.indices.count - 1 {
-        giftMessageInFocus = nil
-      } else {
-        giftMessageInFocus = .row(id: recipientEmails[index + 1].id)
-      }
+    init(checkoutData: CheckoutData) {
+        self.checkoutData = checkoutData
     }
-  }
 
-  // MARK: Validation
+    // MARK: - Intent(s)
 
-  /// Validate that the message textfield is not empty.
-  var validateMessagePrompt: String {
-    return Validation.validateIsNonEmpty(for: checkoutData.giftMessage)
-  }
-
-  /// Validate that all email textfields in ``GiftMessageView`` have valid emails.
-  var validateEmailsPrompts: [UUID: String] {
-    return recipientEmails.reduce([UUID: String]()) { dict, recipientEmail in
-      var dict = dict
-      dict[recipientEmail.id] = Validation.validateIsEmail(for: recipientEmail.email)
-      return dict
+    /// Add new ``CheckoutData/recipientEmails`` for the recipient.
+    func addNewEmail() {
+        let newEmail = RecipientEmail(email: "")
+        recipientEmails.append(newEmail)
+        giftMessageInFocus = .row(id: newEmail.id)
     }
-  }
 
-  /// Validate all textfields inside ``GiftMessageView``. Set focus to first invalid textfield.
-  /// - Returns: True if all textfields is valid and false otherwise.
-  func validateFields() -> Bool {
-    if !validateMessagePrompt.isEmpty {
-      giftMessageInFocus = .message
-      return false
-    } else {
-      for (key, value) in validateEmailsPrompts where !value.isEmpty {
-        giftMessageInFocus = .row(id: key)
-        return false
-      }
-      giftMessageInFocus = nil
-      return true
+    /// Toggle focus between ``GiftMessageView`` email textfields by changing **FocusState** variable. The view release focus if it reaches the last email textfield.
+    func toggleFocus() {
+        guard let currentFocus = recipientEmails.first(where: { giftMessageInFocus == .row(id: $0.id) }) else { return }
+        for index in recipientEmails.indices where currentFocus.id == recipientEmails[index].id {
+            if index == recipientEmails.indices.count - 1 {
+                giftMessageInFocus = nil
+            } else {
+                giftMessageInFocus = .row(id: recipientEmails[index + 1].id)
+            }
+        }
     }
-  }
 
-  /// Check if the last word of the ``CheckoutData/giftMessage``corresponds to an emoji and if so then replace it with its corresponding emoji.
-  func checkTextToEmoji() {
-    if let lastWord = checkoutData.giftMessage.components(separatedBy: [" "]).last, !lastWord.isEmpty {
-      if let emoji = TextToEmojiTranslator.checkEmoji(for: lastWord) {
-        suggestedEmoji = emoji
-      } else {
-        suggestedEmoji = ""
-      }
-    } else {
-      suggestedEmoji = ""
+    // MARK: Validation
+
+    /// Validate that the message textfield is not empty.
+    var validateMessagePrompt: String {
+        return Validation.validateIsNonEmpty(for: checkoutData.giftMessage)
     }
-  }
+
+    /// Validate that all email textfields in ``GiftMessageView`` have valid emails.
+    var validateEmailsPrompts: [UUID: String] {
+        return recipientEmails.reduce([UUID: String]()) { dict, recipientEmail in
+            var dict = dict
+            dict[recipientEmail.id] = Validation.validateIsEmail(for: recipientEmail.email)
+            return dict
+        }
+    }
+
+    /// Validate all textfields inside ``GiftMessageView``. Set focus to first invalid textfield.
+    /// - Returns: True if all textfields is valid and false otherwise.
+    func validateFields() -> Bool {
+        if !validateMessagePrompt.isEmpty {
+            giftMessageInFocus = .message
+            return false
+        } else {
+            for (key, value) in validateEmailsPrompts where !value.isEmpty {
+                giftMessageInFocus = .row(id: key)
+                return false
+            }
+            giftMessageInFocus = nil
+            return true
+        }
+    }
+
+    /// Check if the last word of the ``CheckoutData/giftMessage``corresponds to an emoji and if so then replace it with its corresponding emoji.
+    func checkTextToEmoji() {
+        if let lastWord = checkoutData.giftMessage.components(separatedBy: [" "]).last, !lastWord.isEmpty {
+            if let emoji = TextToEmojiTranslator.checkEmoji(for: lastWord) {
+                suggestedEmoji = emoji
+            } else {
+                suggestedEmoji = ""
+            }
+        } else {
+            suggestedEmoji = ""
+        }
+    }
 }

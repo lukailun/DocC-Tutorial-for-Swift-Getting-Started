@@ -30,99 +30,99 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
 import GivenWithLoveHelper
+import SwiftUI
 
 /// Gift message `Focusable` cases used to toggle focus inside ``GiftMessageView``.
 enum GiftMessageFocusable: Hashable {
-  case message
-  case row(id: UUID)
+    case message
+    case row(id: UUID)
 }
 
 struct GiftMessageView: View {
-  @Binding var rootIsActive: Bool
-  @ObservedObject var giftMessageViewModel: GiftMessageViewModel
-  @FocusState private var giftMessageInFocus: GiftMessageFocusable?
-  @State private var showingAlert = false
+    @Binding var rootIsActive: Bool
+    @ObservedObject var giftMessageViewModel: GiftMessageViewModel
+    @FocusState private var giftMessageInFocus: GiftMessageFocusable?
+    @State private var showingAlert = false
 
-  @ViewBuilder var recipientEmailsView: some View {
-    Section(header: Text("Recipient Emails")) {
-      List {
-        ForEach($giftMessageViewModel.recipientEmails) { recipientEmail in
-          EntryTextField(
-            sfSymbolName: "envelope",
-            placeHolder: "Recipient Email",
-            prompt: giftMessageViewModel.validateEmailsPrompts[recipientEmail.id] ?? "",
-            field: recipientEmail.email
-          )
-          .font(.body)
-          .keyboardType(.emailAddress)
-          .focused($giftMessageInFocus, equals: .row(id: recipientEmail.id))
-        }
-      }
-
-      Button {
-        giftMessageViewModel.addNewEmail()
-      } label: {
-        HStack {
-          Image(systemName: "plus.circle.fill")
-            .font(.system(size: 16, weight: .bold))
-          Text("Add new email")
-          Spacer()
-        }
-      }
-      .padding()
-    }
-  }
-
-  var body: some View {
-    VStack {
-      Form {
-        Section(header: Text("Gift Message")) {
-          TextEditor(text: $giftMessageViewModel.checkoutData.giftMessage)
-            .font(.body)
-            .focused($giftMessageInFocus, equals: .message)
-            .focusedValue(\.messageValue, $giftMessageViewModel.checkoutData.giftMessage)
-            .onAppear {
-              DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                self.giftMessageInFocus = .message
-              }
+    @ViewBuilder var recipientEmailsView: some View {
+        Section(header: Text("Recipient Emails")) {
+            List {
+                ForEach($giftMessageViewModel.recipientEmails) { recipientEmail in
+                    EntryTextField(
+                        sfSymbolName: "envelope",
+                        placeHolder: "Recipient Email",
+                        prompt: giftMessageViewModel.validateEmailsPrompts[recipientEmail.id] ?? "",
+                        field: recipientEmail.email
+                    )
+                    .font(.body)
+                    .keyboardType(.emailAddress)
+                    .focused($giftMessageInFocus, equals: .row(id: recipientEmail.id))
+                }
             }
-          Text(giftMessageViewModel.validateMessagePrompt)
-            .fixedSize(horizontal: false, vertical: true)
-            .font(.caption)
-        }
 
-        recipientEmailsView
-      }
-      .onSubmit {
-        giftMessageViewModel.toggleFocus()
-      }
-      .onChange(of: giftMessageInFocus) { giftMessageViewModel.giftMessageInFocus = $0 }
-      .onChange(of: giftMessageViewModel.giftMessageInFocus ) { giftMessageInFocus = $0 }
-
-      CustomButton(text: "Send the Gift") {
-        if giftMessageViewModel.validateFields() {
-          showingAlert = true
+            Button {
+                giftMessageViewModel.addNewEmail()
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 16, weight: .bold))
+                    Text("Add new email")
+                    Spacer()
+                }
+            }
+            .padding()
         }
-      }
-      .alert("Congratulations. \n Your gift is on its way.", isPresented: $showingAlert) {
-        Button("OK") {
-          rootIsActive = false
-        }
-      }
     }
-#if os(iOS)
-  .navigationTitle("Gift Message")
-  .navigationBarTitleDisplayMode(.inline)
-#endif
-  }
+
+    var body: some View {
+        VStack {
+            Form {
+                Section(header: Text("Gift Message")) {
+                    TextEditor(text: $giftMessageViewModel.checkoutData.giftMessage)
+                        .font(.body)
+                        .focused($giftMessageInFocus, equals: .message)
+                        .focusedValue(\.messageValue, $giftMessageViewModel.checkoutData.giftMessage)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                                self.giftMessageInFocus = .message
+                            }
+                        }
+                    Text(giftMessageViewModel.validateMessagePrompt)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .font(.caption)
+                }
+
+                recipientEmailsView
+            }
+            .onSubmit {
+                giftMessageViewModel.toggleFocus()
+            }
+            .onChange(of: giftMessageInFocus) { giftMessageViewModel.giftMessageInFocus = $0 }
+            .onChange(of: giftMessageViewModel.giftMessageInFocus) { giftMessageInFocus = $0 }
+
+            CustomButton(text: "Send the Gift") {
+                if giftMessageViewModel.validateFields() {
+                    showingAlert = true
+                }
+            }
+            .alert("Congratulations. \n Your gift is on its way.", isPresented: $showingAlert) {
+                Button("OK") {
+                    rootIsActive = false
+                }
+            }
+        }
+        #if os(iOS)
+        .navigationTitle("Gift Message")
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
 }
 
 struct GiftMessageView_Previews: PreviewProvider {
-  static var previews: some View {
-    let gift = Gift(name: "Watch", price: 100)
-    let giftMessageViewModel = GiftMessageViewModel(checkoutData: CheckoutData(gift: gift))
-    GiftMessageView(rootIsActive: .constant(false), giftMessageViewModel: giftMessageViewModel)
-  }
+    static var previews: some View {
+        let gift = Gift(name: "Watch", price: 100)
+        let giftMessageViewModel = GiftMessageViewModel(checkoutData: CheckoutData(gift: gift))
+        GiftMessageView(rootIsActive: .constant(false), giftMessageViewModel: giftMessageViewModel)
+    }
 }

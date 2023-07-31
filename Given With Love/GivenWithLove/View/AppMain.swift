@@ -34,12 +34,12 @@ import SwiftUI
 
 @main
 struct AppMain: App {
-  var body: some Scene {
-    let giftsViewModel = GiftsViewModel()
+    var body: some Scene {
+        let giftsViewModel = GiftsViewModel()
 
-    WindowGroup {
-      GiftsHomeView(giftsViewModel: giftsViewModel)
-        .navigationViewStyle(.stack)
+        WindowGroup {
+            GiftsHomeView(giftsViewModel: giftsViewModel)
+                .navigationViewStyle(.stack)
+        }
     }
-  }
 }

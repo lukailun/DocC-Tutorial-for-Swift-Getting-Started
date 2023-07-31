@@ -34,12 +34,12 @@ import SwiftUI
 
 /// This struct observes focused value of ``CheckoutData/giftMessage`` to track changes in its value.
 struct FocusedMessageBinding: FocusedValueKey {
-  typealias Value = Binding<String>
+    typealias Value = Binding<String>
 }
 
 extension FocusedValues {
-  var messageValue: FocusedMessageBinding.Value? {
-    get { self[FocusedMessageBinding.self] }
-    set { self[FocusedMessageBinding.self] = newValue }
-  }
+    var messageValue: FocusedMessageBinding.Value? {
+        get { self[FocusedMessageBinding.self] }
+        set { self[FocusedMessageBinding.self] = newValue }
+    }
 }

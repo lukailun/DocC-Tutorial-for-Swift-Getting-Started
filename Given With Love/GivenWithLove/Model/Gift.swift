@@ -34,8 +34,8 @@ import Foundation
 
 /// Gift detailed information.
 struct Gift: Hashable, Identifiable {
-  let id: String = UUID().uuidString
-  let name: String
-  let price: Int
-  var isChosenGift = false
+    let id: String = UUID().uuidString
+    let name: String
+    let price: Int
+    var isChosenGift = false
 }

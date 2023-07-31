@@ -34,36 +34,36 @@ import SwiftUI
 
 /// Single gift view showing the ``Gift`` image, name, and price.
 struct SingleGiftView: View {
-  private var gift: Gift
+    private var gift: Gift
 
-  init(for gift: Gift) {
-    self.gift = gift
-  }
-
-  var body: some View {
-    VStack(alignment: .leading) {
-      Image(gift.name)
-        .resizable()
-        .aspectRatio(1, contentMode: .fill)
-        .cornerRadius(16)
-      Text(gift.name)
-        .padding(8)
-        .font(.title3.weight(.bold))
-      Text("$\(gift.price)")
-        .padding([.bottom, .horizontal], 8)
-        .font(.body)
+    init(for gift: Gift) {
+        self.gift = gift
     }
-    .cornerRadius(8)
-    .overlay(
-      RoundedRectangle(cornerRadius: 16)
-        .stroke(gift.isChosenGift ? Color.green : Color.blue, lineWidth: 2)
-    )
-  }
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Image(gift.name)
+                .resizable()
+                .aspectRatio(1, contentMode: .fill)
+                .cornerRadius(16)
+            Text(gift.name)
+                .padding(8)
+                .font(.title3.weight(.bold))
+            Text("$\(gift.price)")
+                .padding([.bottom, .horizontal], 8)
+                .font(.body)
+        }
+        .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(gift.isChosenGift ? Color.green : Color.blue, lineWidth: 2)
+        )
+    }
 }
 
 struct SingleGiftView_Previews: PreviewProvider {
-  static var previews: some View {
-    let gift = Gift(name: "Bracelet", price: 100)
-    SingleGiftView(for: gift)
-  }
+    static var previews: some View {
+        let gift = Gift(name: "Bracelet", price: 100)
+        SingleGiftView(for: gift)
+    }
 }

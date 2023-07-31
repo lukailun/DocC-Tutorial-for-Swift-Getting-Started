@@ -34,31 +34,32 @@ import SwiftUI
 
 /// Gifts view model that handles choosing one ``Gift`` to be sent to recipient.
 class GiftsViewModel: ObservableObject {
-  // MARK: - Variables
-  @Published var gifts = [
-    Gift(name: "Bracelet", price: 100),
-    Gift(name: "Camera", price: 500),
-    Gift(name: "Earbud", price: 200),
-    Gift(name: "Headphone", price: 100),
-    Gift(name: "Makeup Bag", price: 5000),
-    Gift(name: "Perfume", price: 300),
-    Gift(name: "Phone case", price: 40),
-    Gift(name: "Playstation", price: 10),
-    Gift(name: "Watch", price: 80)
-  ]
+    // MARK: - Variables
 
-  var chosenGift: Gift?
+    @Published var gifts = [
+        Gift(name: "Bracelet", price: 100),
+        Gift(name: "Camera", price: 500),
+        Gift(name: "Earbud", price: 200),
+        Gift(name: "Headphone", price: 100),
+        Gift(name: "Makeup Bag", price: 5000),
+        Gift(name: "Perfume", price: 300),
+        Gift(name: "Phone case", price: 40),
+        Gift(name: "Playstation", price: 10),
+        Gift(name: "Watch", price: 80),
+    ]
 
-  // MARK: - Intent(s)
+    var chosenGift: Gift?
 
-  func chooseGift(gift: Gift) {
-    for index in gifts.indices {
-      if gift.id == gifts[index].id {
-        gifts[index].isChosenGift = true
-        chosenGift = gift
-      } else {
-        gifts[index].isChosenGift = false
-      }
+    // MARK: - Intent(s)
+
+    func chooseGift(gift: Gift) {
+        for index in gifts.indices {
+            if gift.id == gifts[index].id {
+                gifts[index].isChosenGift = true
+                chosenGift = gift
+            } else {
+                gifts[index].isChosenGift = false
+            }
+        }
     }
-  }
 }

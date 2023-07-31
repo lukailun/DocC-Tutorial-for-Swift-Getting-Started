@@ -48,7 +48,7 @@ public enum TextToEmojiTranslator {
         if let lastWord = text.components(separatedBy: [" "]).last, !lastWord.isEmpty {
             if let emoji = textToEmoji[lastWord] {
                 let newText = text.replacingOccurrences(of: lastWord, with: emoji)
-                return (newText)
+                return newText
             } else {
                 return text
             }
@@ -67,6 +67,6 @@ public enum TextToEmojiTranslator {
         ":->": "😊",
         "*<|:‑)": "🎅",
         ":E": "😬",
-        "XD": "😂"
+        "XD": "😂",
     ]
 }

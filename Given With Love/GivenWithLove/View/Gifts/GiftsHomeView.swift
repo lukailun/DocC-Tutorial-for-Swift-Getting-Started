@@ -30,53 +30,54 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
 import GivenWithLoveHelper
+import SwiftUI
 
 /// Home view showing ``Gift`` grid view and the checkout button.
 struct GiftsHomeView: View {
-  @ObservedObject var giftsViewModel: GiftsViewModel
-  @State var isActive = false
+    @ObservedObject var giftsViewModel: GiftsViewModel
+    @State var isActive = false
 
-  @ViewBuilder var checkoutButton: some View {
-    if let chosenGift = giftsViewModel.chosenGift {
-      let checkoutViewModel = CheckoutViewModel(checkoutData: CheckoutData(gift: chosenGift))
-      let checkoutFormView = CheckoutFormView(rootIsActive: $isActive, checkoutViewModel: checkoutViewModel)
-      NavigationLink(
-        destination: checkoutFormView,
-        isActive: $isActive) {
-          EmptyView()
-      }
-    }
-    CustomButton(text: "Checkout") {
-      if giftsViewModel.chosenGift != nil {
-        isActive = true
-      }
-    }
-    .disabled(giftsViewModel.chosenGift == nil)
-  }
-
-  var body: some View {
-    NavigationView {
-      VStack {
-        GiftsGridView(giftsViewModel: giftsViewModel)
-        checkoutButton
-      }
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .principal) {
-          Text("Choose your gift")
-            .foregroundColor(Color("rw-dark"))
-            .font(.title3.weight(.bold))
+    @ViewBuilder var checkoutButton: some View {
+        if let chosenGift = giftsViewModel.chosenGift {
+            let checkoutViewModel = CheckoutViewModel(checkoutData: CheckoutData(gift: chosenGift))
+            let checkoutFormView = CheckoutFormView(rootIsActive: $isActive, checkoutViewModel: checkoutViewModel)
+            NavigationLink(
+                destination: checkoutFormView,
+                isActive: $isActive
+            ) {
+                EmptyView()
+            }
         }
-      }
+        CustomButton(text: "Checkout") {
+            if giftsViewModel.chosenGift != nil {
+                isActive = true
+            }
+        }
+        .disabled(giftsViewModel.chosenGift == nil)
     }
-  }
+
+    var body: some View {
+        NavigationView {
+            VStack {
+                GiftsGridView(giftsViewModel: giftsViewModel)
+                checkoutButton
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Choose your gift")
+                        .foregroundColor(Color("rw-dark"))
+                        .font(.title3.weight(.bold))
+                }
+            }
+        }
+    }
 }
 
 struct GiftsView_Previews: PreviewProvider {
-  static var previews: some View {
-    let giftsViewModel = GiftsViewModel()
-    GiftsHomeView(giftsViewModel: giftsViewModel)
-  }
+    static var previews: some View {
+        let giftsViewModel = GiftsViewModel()
+        GiftsHomeView(giftsViewModel: giftsViewModel)
+    }
 }

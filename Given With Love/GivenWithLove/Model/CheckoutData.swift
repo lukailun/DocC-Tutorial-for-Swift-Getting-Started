@@ -33,19 +33,19 @@
 import Foundation
 
 struct CheckoutData {
-  let id = UUID()
-  let gift: Gift?
-  var recipientName = ""
-  var recipientAddress = ""
-  var recipientPhone = ""
-  var payWithCash = false
-  var giftMessage = "Your gift message..."
-  var recipientEmails: [RecipientEmail]?
+    let id = UUID()
+    let gift: Gift?
+    var recipientName = ""
+    var recipientAddress = ""
+    var recipientPhone = ""
+    var payWithCash = false
+    var giftMessage = "Your gift message..."
+    var recipientEmails: [RecipientEmail]?
 }
 
 /// Recipient email information.
 struct RecipientEmail: Hashable, Identifiable {
-  let id = UUID()
-  var email: String
-  var prompt = ""
+    let id = UUID()
+    var email: String
+    var prompt = ""
 }

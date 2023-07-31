@@ -34,42 +34,42 @@ import SwiftUI
 
 /// Gifts view shown as a grid view of two columns.
 struct GiftsGridView: View {
-  @ObservedObject var giftsViewModel: GiftsViewModel
-  let columns: [GridItem] = [
-    GridItem(.flexible()),
-    GridItem(.flexible())
-  ]
+    @ObservedObject var giftsViewModel: GiftsViewModel
+    let columns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+    ]
 
-  var body: some View {
-    ScrollView {
-      LazyVGrid(
-        columns: columns,
-        alignment: .center
-      ) {
-        ForEach(giftsViewModel.gifts) { gift in
-          ZStack(alignment: .topTrailing) {
-            SingleGiftView(for: gift)
+    var body: some View {
+        ScrollView {
+            LazyVGrid(
+                columns: columns,
+                alignment: .center
+            ) {
+                ForEach(giftsViewModel.gifts) { gift in
+                    ZStack(alignment: .topTrailing) {
+                        SingleGiftView(for: gift)
 
-            if gift.isChosenGift {
-              Image(systemName: "checkmark.seal.fill")
-                .resizable()
-                .foregroundColor(Color.green)
-                .frame(width: 40, height: 40)
+                        if gift.isChosenGift {
+                            Image(systemName: "checkmark.seal.fill")
+                                .resizable()
+                                .foregroundColor(Color.green)
+                                .frame(width: 40, height: 40)
+                        }
+                    }
+                    .padding()
+                    .onTapGesture {
+                        giftsViewModel.chooseGift(gift: gift)
+                    }
+                }
             }
-          }
-          .padding()
-          .onTapGesture {
-            giftsViewModel.chooseGift(gift: gift)
-          }
         }
-      }
     }
-  }
 }
 
 struct GiftsGridView_Previews: PreviewProvider {
-  static var previews: some View {
-    let giftsViewModel = GiftsViewModel()
-    GiftsGridView(giftsViewModel: giftsViewModel)
-  }
+    static var previews: some View {
+        let giftsViewModel = GiftsViewModel()
+        GiftsGridView(giftsViewModel: giftsViewModel)
+    }
 }

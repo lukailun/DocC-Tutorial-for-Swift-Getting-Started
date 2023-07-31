@@ -34,7 +34,7 @@ import Foundation
 
 /// Available validation errors for all textfield inside Given With Love app.
 enum ValidationErrors: String {
-  case emptyText = "Text can not be empty!"
-  case email = "Invalid email format."
-  case phone = "Invalid phone number."
+    case emptyText = "Text can not be empty!"
+    case email = "Invalid email format."
+    case phone = "Invalid phone number."
 }

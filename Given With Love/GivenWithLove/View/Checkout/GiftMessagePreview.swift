@@ -30,60 +30,60 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
 import GivenWithLoveHelper
+import SwiftUI
 
 /// Gift message preview showing how the message written by user appears inside a frame.
 struct GiftMessagePreview: View {
-  @ObservedObject var giftMessageViewModel: GiftMessageViewModel
-  @FocusedBinding(\.messageValue) var messageValue
+    @ObservedObject var giftMessageViewModel: GiftMessageViewModel
+    @FocusedBinding(\.messageValue) var messageValue
 
-  @ViewBuilder var emojiSuggestionView: some View {
-    HStack {
-      Button {
-        if let message = messageValue {
-          messageValue = TextToEmojiTranslator.replaceLastWord(from: message)
-        }
-      } label: {
+    @ViewBuilder var emojiSuggestionView: some View {
         HStack {
-          Text("Suggested Emoji: ")
-          Text(giftMessageViewModel.suggestedEmoji)
-          Spacer()
+            Button {
+                if let message = messageValue {
+                    messageValue = TextToEmojiTranslator.replaceLastWord(from: message)
+                }
+            } label: {
+                HStack {
+                    Text("Suggested Emoji: ")
+                    Text(giftMessageViewModel.suggestedEmoji)
+                    Spacer()
+                }
+            }
+            .padding()
         }
-      }
-      .padding()
     }
-  }
 
-  var body: some View {
-    VStack {
-      Text("Gift Message Preview")
-        .foregroundColor(Color("rw-dark"))
-        .font(.title3.weight(.bold))
-        .padding()
-      ZStack {
-        GeometryReader { geometry in
-          Image("Gift Card Background")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+    var body: some View {
+        VStack {
+            Text("Gift Message Preview")
+                .foregroundColor(Color("rw-dark"))
+                .font(.title3.weight(.bold))
+                .padding()
+            ZStack {
+                GeometryReader { geometry in
+                    Image("Gift Card Background")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                }
+                Text(messageValue ?? "There is no message")
+                    .padding()
+                    .onChange(of: messageValue) { _ in
+                        giftMessageViewModel.checkTextToEmoji()
+                    }
+            }
+
+            emojiSuggestionView
         }
-        Text(messageValue ?? "There is no message")
-          .padding()
-          .onChange(of: messageValue) { _ in
-            giftMessageViewModel.checkTextToEmoji()
-          }
-      }
-
-      emojiSuggestionView
     }
-  }
 }
 
 struct GiftMessagePreview_Previews: PreviewProvider {
-  static var previews: some View {
-    let gift = Gift(name: "Watch", price: 100)
-    let giftMessageViewModel = GiftMessageViewModel(checkoutData: CheckoutData(gift: gift))
-    GiftMessagePreview(giftMessageViewModel: giftMessageViewModel)
-  }
+    static var previews: some View {
+        let gift = Gift(name: "Watch", price: 100)
+        let giftMessageViewModel = GiftMessageViewModel(checkoutData: CheckoutData(gift: gift))
+        GiftMessagePreview(giftMessageViewModel: giftMessageViewModel)
+    }
 }

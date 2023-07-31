@@ -30,61 +30,62 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
 import GivenWithLoveHelper
+import SwiftUI
 
 /// Checkout view model that handles toggling focus between ``CheckoutData`` views, and validate textfields.
 class CheckoutViewModel: ObservableObject {
-  // MARK: - Variables
-  @Published var checkoutData: CheckoutData
-  @Published var allFieldsValid = false
-  @Published var checkoutInFocus: CheckoutFocusable?
+    // MARK: - Variables
 
-  init(checkoutData: CheckoutData) {
-    self.checkoutData = checkoutData
-  }
+    @Published var checkoutData: CheckoutData
+    @Published var allFieldsValid = false
+    @Published var checkoutInFocus: CheckoutFocusable?
 
-  // MARK: - Intent(s)
-
-  /// Toggle focus between checkout views by changing  `checkoutInFocus` variable inside ``CheckoutFormView``.
-  func toggleFocus() {
-    if checkoutInFocus == .name {
-      checkoutInFocus = .address
-    } else if checkoutInFocus == .address {
-      checkoutInFocus = .phone
-    } else if checkoutInFocus == .phone {
-      checkoutInFocus = nil
+    init(checkoutData: CheckoutData) {
+        self.checkoutData = checkoutData
     }
-  }
 
-  // MARK: Validation
+    // MARK: - Intent(s)
 
-  var validateNamePrompt: String {
-    return Validation.validateIsNonEmpty(for: checkoutData.recipientName)
-  }
-
-  var validateAddressPrompt: String {
-    return Validation.validateIsNonEmpty(for: checkoutData.recipientAddress)
-  }
-
-  var validatePhonePrompt: String {
-    return Validation.validateIsPhone(for: checkoutData.recipientPhone)
-  }
-
-  /// Validate all textfields in ``CheckoutFormView``. Set focus on first invalid textfield.
-  func validateAllFields() {
-    let isNameValid = validateNamePrompt.isEmpty
-    let isAddressValid = validateAddressPrompt.isEmpty
-    let isPhoneValid = validatePhonePrompt.isEmpty
-
-    allFieldsValid = isNameValid && isAddressValid && isPhoneValid
-
-    if !isNameValid {
-      checkoutInFocus = .name
-    } else if !isAddressValid {
-      checkoutInFocus = .address
-    } else if !isPhoneValid {
-      checkoutInFocus = .phone
+    /// Toggle focus between checkout views by changing  `checkoutInFocus` variable inside ``CheckoutFormView``.
+    func toggleFocus() {
+        if checkoutInFocus == .name {
+            checkoutInFocus = .address
+        } else if checkoutInFocus == .address {
+            checkoutInFocus = .phone
+        } else if checkoutInFocus == .phone {
+            checkoutInFocus = nil
+        }
     }
-  }
+
+    // MARK: Validation
+
+    var validateNamePrompt: String {
+        return Validation.validateIsNonEmpty(for: checkoutData.recipientName)
+    }
+
+    var validateAddressPrompt: String {
+        return Validation.validateIsNonEmpty(for: checkoutData.recipientAddress)
+    }
+
+    var validatePhonePrompt: String {
+        return Validation.validateIsPhone(for: checkoutData.recipientPhone)
+    }
+
+    /// Validate all textfields in ``CheckoutFormView``. Set focus on first invalid textfield.
+    func validateAllFields() {
+        let isNameValid = validateNamePrompt.isEmpty
+        let isAddressValid = validateAddressPrompt.isEmpty
+        let isPhoneValid = validatePhonePrompt.isEmpty
+
+        allFieldsValid = isNameValid && isAddressValid && isPhoneValid
+
+        if !isNameValid {
+            checkoutInFocus = .name
+        } else if !isAddressValid {
+            checkoutInFocus = .address
+        } else if !isPhoneValid {
+            checkoutInFocus = .phone
+        }
+    }
 }
