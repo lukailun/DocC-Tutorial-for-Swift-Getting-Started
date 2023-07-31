@@ -32,6 +32,7 @@
 
 import Foundation
 
+/// Checkout data needed to send a specific gift to a recipient's address and a gift message to the recipient's email.
 struct CheckoutData {
     let id = UUID()
     let gift: Gift?
