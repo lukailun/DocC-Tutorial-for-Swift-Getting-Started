@@ -33,6 +33,11 @@
 import Foundation
 
 public enum Validation {
+    /// Check if the input string is valid compared to the specified regex.
+    /// - Parameters:
+    ///   - input: Input string under test.
+    ///   - regex: The regex that compared to the input string.
+    /// - Returns: True if the input string is valid compared to the specified regex and false otherwise.
     public static func isValid(input: String?, with regex: String) -> Bool {
         if let input = input {
             let test = NSPredicate(format: "SELF MATCHES %@", regex)
