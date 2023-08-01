@@ -39,6 +39,7 @@ enum GiftMessageFocusable: Hashable {
     case row(id: UUID)
 }
 
+/// Gift message view including ``CheckoutData/giftMessage`` that user send to ``CheckoutData/recipientEmails``.
 struct GiftMessageView: View {
     @Binding var rootIsActive: Bool
     @ObservedObject var giftMessageViewModel: GiftMessageViewModel
